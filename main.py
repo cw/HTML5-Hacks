@@ -21,9 +21,10 @@ from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
 
 
+config = {"SITE_NAME": "HTML5 Hacks"}
+
 class MainHandler(webapp.RequestHandler):
     def get(self):
-        config = {"SITE_NAME": "HTML5 Hacks"}
         template_values = {
             "title": "HTML5 Hacks index",
             "config": config
@@ -31,9 +32,30 @@ class MainHandler(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
         self.response.out.write(template.render(path, template_values))
 
+class SvgHandler(webapp.RequestHandler):
+    def get(self):
+        template_values = {
+            "title": "HTML5 Hacks: SVG",
+            "config": config
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/svg.html')
+        self.response.out.write(template.render(path, template_values))
+
+class CanvasHandler(webapp.RequestHandler):
+    def get(self):
+        template_values = {
+            "title": "HTML5 Hacks: canvas",
+            "config": config
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/canvas.html')
+        self.response.out.write(template.render(path, template_values))
+
 
 def main():
-    application = webapp.WSGIApplication([('/', MainHandler)],
+    application = webapp.WSGIApplication([('/', MainHandler),
+                                          ('/svg', SvgHandler),
+                                          ('/canvas', CanvasHandler),
+                                         ],
                                          debug=True)
     util.run_wsgi_app(application)
 
