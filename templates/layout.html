@@ -63,7 +63,7 @@
     <div id="main" class="grid_12">
 
         <div class="flash_messages">
-            {% for message in get_flashed_messages() %}
+            {% for message in messages %}
             <div class="flash">
                 {{ message }}
             </div>
@@ -109,11 +109,10 @@
   <!-- end profiling code -->
 
 
-  {#
   <!-- asynchronous google analytics: mathiasbynens.be/notes/async-analytics-snippet
        change the UA-XXXXX-X to be your site's ID -->
   <script>
-   var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
+   var _gaq = [['_setAccount', 'UA-18240392-1'], ['_trackPageview']];
    (function(d, t) {
     var g = d.createElement(t),
         s = d.getElementsByTagName(t)[0];
@@ -122,7 +121,6 @@
     s.parentNode.insertBefore(g, s);
    })(document, 'script');
   </script>
-  #}
 
 </body>
 </html>
