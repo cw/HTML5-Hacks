@@ -2,14 +2,26 @@
 
 {% block header %}
 <h1>Welcome to {{ config.SITE_NAME }}</h1>
+<p>HTML5 represents a shift from the desktop as a primary computing
+device towards a more ubiquitous mobile computing environment. While many modern
+mobile devices aren't yet capable of the full range of new technologies
+incorporated into the HTML5 umbrella, this site intends to show the power of two
+elements: svg and canvas. Eventually devices everywhere will have at their
+disposal incredibly powerful User Interfaces that can interact with device sensors 
+resulting in a feedback loop that will help accelerate the force of
+technology on this planet and beyond.</p>
 {% endblock %}
 
 {% block body %}
 <p>
-Hello World, at {% now "r" %}
+<a href="/svg">SVG</a>
+</p>
+<p>
+<a href="/canvas">canvas</a>
 </p>
 {% endblock %}
 
 {% block footer %}
-Copyright 2010, {{ config.SITE_NAME }}
+&copy; 2010, {{ config.SITE_NAME }} &bull; <a
+    href="http://github.com/cw/HTML5-Hacks/">fork me</a>
 {% endblock %}
