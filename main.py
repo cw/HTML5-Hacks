@@ -34,9 +34,14 @@ class MainHandler(webapp.RequestHandler):
 
 class SvgHandler(webapp.RequestHandler):
     def get(self):
+        svg_path = os.path.join(os.path.dirname(__file__), 'templates/puzzle.svg')
+        svg_text = template.render(svg_path, {})
         template_values = {
             "title": "HTML5 Hacks: SVG",
-            "config": config
+            "config": config,
+            "svg_text": svg_text,
+            "rows": ["A", "B", "C", "D", "E", "F", "G", "H"],
+            "cols": ["1", "2", "3", "4", "5", "6", "7", "8"]
         }
         path = os.path.join(os.path.dirname(__file__), 'templates/svg.html')
         self.response.out.write(template.render(path, template_values))
