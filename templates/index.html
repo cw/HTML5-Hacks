@@ -1,27 +1,33 @@
 {% extends "layout.html" %}
 
+{% block scripts %}
+{% endblock scripts %}
+
 {% block header %}
 <h1>Welcome to {{ config.SITE_NAME }}</h1>
+<!--
 <p>HTML5 represents a shift from the desktop as a primary computing
-device towards a more ubiquitous mobile computing environment. While many modern
-mobile devices aren't yet capable of the full range of new technologies
-incorporated into the HTML5 umbrella, this site intends to show the power of two
-elements: svg and canvas. Eventually devices everywhere will have at their
+device towards a more ubiquitous mobile computing environment. Eventually devices everywhere will have at their
 disposal incredibly powerful User Interfaces that can interact with device sensors 
 resulting in a feedback loop that will help accelerate the force of
 technology on this planet and beyond.</p>
+<p>While many modern mobile devices aren't yet capable of the full range of new technologies
+incorporated into the HTML5 umbrella, this site intends to show the power of two
+elements: svg and canvas.</p>
+-->
+<p>This site is my experimentation lab as I learn about the family of
+technologies which fall under the <a
+    href="http://diveintohtml5.org/introduction.html#one">HTML5 umbrella</a>.</p>
 {% endblock %}
 
 {% block body %}
-<p>
+<div id="holder"></div>
 <a href="/svg">SVG</a>
-</p>
-<p>
-<a href="/canvas">canvas</a>
-</p>
+<a href="/canvas">Canvas</a>
+
 {% endblock %}
 
 {% block footer %}
 &copy; 2010, {{ config.SITE_NAME }} &bull; <a
-    href="http://github.com/cw/HTML5-Hacks/">fork me</a>
+    href="http://github.com/cw/HTML5-Hacks/">fork me on github</a>
 {% endblock %}

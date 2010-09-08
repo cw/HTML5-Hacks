@@ -1,7 +1,61 @@
 {% extends "index.html" %}
 
+{% block scripts %}
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    jQuery(".toggle_row").toggle(
+        function () {
+            var val = jQuery(this).val();
+            jQuery('#[id^=' + val +']').hide();
+        },
+        function () {
+            var val = jQuery(this).val();
+            jQuery('#[id^=' + val +']').show();
+        }
+    );
+    jQuery(".toggle_col").toggle(
+        function () {
+            var val = jQuery(this).val();
+            jQuery('#[id$=' + val +']').hide();
+            /*
+            this.style.display="none";
+            var redrawFix = this.offsetHeight;
+            this.style.display="block"; // or other value if required
+            */
+        },
+        function () {
+            var val = jQuery(this).val();
+            jQuery('#[id$=' + val +']').show();
+        }
+    );
+    jQuery("#image_url").change(function (evt) {
+        var url = evt.target.value;
+        console.log(url);
+        jQuery.ajax({
+            url: url, 
+            complete :function (ahk) {
+                console.log("found url");
+            }
+        });
+    });
+});
+</script>
+{% endblock scripts %}
+
 {% block body %}
 <h2><a href="/">Home</a> &rarr; SVG</h2>
 <p>SVG is awesome. Let me demonstrate.</p>
+<form>
+    <input id="image_url" name="q" type="url" placeholder="Enter image URL"
+    value="http://farm5.static.flickr.com/4114/4942943925_ce20e0e3a9_z.jpg">
+    <input type="button" value="Embed image">
+</form>
+<form>
+    <label for="toggle_row">Toggle Row</label>
+    {% for row in rows %}<input class="toggle_row" type="button" value="{{ row }}">{% endfor %}
+    <label for="toggle_col">Toggle Column</label>
+    {% for col in cols %}<input class="toggle_col" type="button" value="{{ col }}">{% endfor %}
+</form>
+{{ svg_text }}
 {% endblock %}
 
