@@ -4,7 +4,11 @@
 {% endblock scripts %}
 
 {% block header %}
-<h1>Welcome to {{ config.SITE_NAME }}</h1>
+<div class="grid_3">
+    <h1><a href="/">{{ config.SITE_NAME }}</a></h1>
+</div>
+<div class="grid_5">
+<p>This site is my experimentation lab as I learn about the family of
 <!--
 <p>HTML5 represents a shift from the desktop as a primary computing
 device towards a more ubiquitous mobile computing environment. Eventually devices everywhere will have at their
@@ -15,9 +19,9 @@ technology on this planet and beyond.</p>
 incorporated into the HTML5 umbrella, this site intends to show the power of two
 elements: svg and canvas.</p>
 -->
-<p>This site is my experimentation lab as I learn about the family of
-technologies which fall under the <a
+technologies included under the <a
     href="http://diveintohtml5.org/introduction.html#one">HTML5 umbrella</a>.</p>
+</div>
 {% endblock %}
 
 {% block body %}
