@@ -19,9 +19,11 @@ import os
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
-
+from models import Piece, Location
 
 config = {"SITE_NAME": "HTML5 Hacks"}
+
+
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
@@ -34,14 +36,29 @@ class MainHandler(webapp.RequestHandler):
 
 class SvgHandler(webapp.RequestHandler):
     def get(self):
+
+        pieces = Piece.gql("ORDER BY date DESC LIMIT 10")
+        locations = Location.gql("ORDER BY date DESC LIMIT 10")
         svg_path = os.path.join(os.path.dirname(__file__), 'templates/puzzle.svg')
-        svg_text = template.render(svg_path, {})
+        svg_values = {
+            "pieces": pieces,
+            "locations": locations, #[
+#                {
+#                    "piece": {"id": "A1"}, 
+#                    "x": 0,
+#                    "y": 0,
+#                    "width": 641,
+#                    "height": 481,
+#                }
+#            ]
+        }
+        svg_text = template.render(svg_path, svg_values)
         template_values = {
             "title": "HTML5 Hacks: SVG",
             "config": config,
             "svg_text": svg_text,
             "rows": ["A", "B", "C", "D", "E", "F", "G", "H"],
-            "cols": ["1", "2", "3", "4", "5", "6", "7", "8"]
+            "cols": ["1", "2", "3", "4", "5", "6", "7", "8"],
         }
         path = os.path.join(os.path.dirname(__file__), 'templates/svg.html')
         self.response.out.write(template.render(path, template_values))
