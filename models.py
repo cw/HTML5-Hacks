@@ -7,7 +7,9 @@ class Piece(db.Model):
     address = db.StringProperty(multiline=False)
 
 class Location(db.Model):
+    piece = db.ReferenceProperty(Piece)
     author = db.UserProperty()
+    date = db.DateTimeProperty(auto_now_add=True)
     x = db.FloatProperty()
     y = db.FloatProperty()
     width = db.FloatProperty()
