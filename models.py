@@ -1,10 +1,13 @@
 from google.appengine.ext import db
 
+class Puzzle(db.Model):
+    name = db.StringProperty(multiline=False)
+
 class Piece(db.Model):
-    author = db.UserProperty()
-    path = db.TextProperty()
+#    puzzle = db.ReferenceProperty(Puzzle)
     date = db.DateTimeProperty(auto_now_add=True)
     address = db.StringProperty(multiline=False)
+    path = db.TextProperty()
 
 class Location(db.Model):
     piece = db.ReferenceProperty(Piece)
