@@ -37,7 +37,7 @@ class MainHandler(webapp.RequestHandler):
 class SvgHandler(webapp.RequestHandler):
     def get(self):
 
-        pieces = Piece.gql("ORDER BY date DESC LIMIT 10")
+        pieces = Piece.gql("ORDER BY address ASC")
         locations = Location.gql("ORDER BY date DESC LIMIT 10")
         svg_path = os.path.join(os.path.dirname(__file__), 'templates/puzzle.svg')
         svg_values = {
