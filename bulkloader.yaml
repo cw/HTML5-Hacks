@@ -58,18 +58,21 @@ transformers:
 
     - property: piece
       external_name: piece
-      #import_transform: transform.create_foreign_key("Piece")
-      import_transform: models.Piece
+      import_transform: transform.create_foreign_key("Piece")
       export_transform: transform.key_id_or_name_as_string
 
     - property: x
       external_name: x
+      import_transform: float
 
     - property: y
       external_name: y
+      import_transform: float
 
     - property: width
       external_name: width
+      import_transform: float
 
     - property: height
       external_name: height
+      import_transform: float
