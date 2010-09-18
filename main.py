@@ -38,19 +38,11 @@ class SvgHandler(webapp.RequestHandler):
     def get(self):
 
         pieces = Piece.gql("ORDER BY address ASC")
-        locations = Location.gql("ORDER BY date DESC LIMIT 10")
+        locations = Location.gql("ORDER BY x ASC")
         svg_path = os.path.join(os.path.dirname(__file__), 'templates/puzzle.svg')
         svg_values = {
             "pieces": pieces,
-            "locations": locations, #[
-#                {
-#                    "piece": {"id": "A1"}, 
-#                    "x": 0,
-#                    "y": 0,
-#                    "width": 641,
-#                    "height": 481,
-#                }
-#            ]
+            "locations": locations,
         }
         svg_text = template.render(svg_path, svg_values)
         template_values = {
