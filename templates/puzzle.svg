@@ -6,8 +6,6 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.1"
    id="Puzzle"
    x="0px"
@@ -17,20 +15,27 @@
    viewBox="0 0 641 481"
    enable-background="new 0 0 641 481"
    xml:space="preserve"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="puzzle.svg"><title
-   id="title3120">Puzzle</title><metadata
-   id="metadata3118"><rdf:RDF><cc:Work
-       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title>Puzzle</dc:title><cc:license
-         rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" /><dc:source>http://commons.wikimedia.org/wiki/File:Jigsaw_Puzzle.svg</dc:source><dc:date>2008-10-23</dc:date><dc:creator><cc:Agent><dc:title>http://commons.wikimedia.org/wiki/User:Psyon</dc:title></cc:Agent></dc:creator></cc:Work><cc:License
-       rdf:about="http://creativecommons.org/licenses/by-sa/3.0/"><cc:permits
-         rdf:resource="http://creativecommons.org/ns#Reproduction" /><cc:permits
-         rdf:resource="http://creativecommons.org/ns#Distribution" /><cc:requires
-         rdf:resource="http://creativecommons.org/ns#Notice" /><cc:requires
-         rdf:resource="http://creativecommons.org/ns#Attribution" /><cc:permits
-         rdf:resource="http://creativecommons.org/ns#DerivativeWorks" /><cc:requires
-         rdf:resource="http://creativecommons.org/ns#ShareAlike" /></cc:License></rdf:RDF></metadata>
+   <title id="title3120">Puzzle</title>
+   <metadata id="metadata3118">
+   <rdf:RDF>
+      <cc:Work rdf:about="">
+      <dc:format>image/svg+xml</dc:format>
+      <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      <dc:title>Puzzle</dc:title><cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
+      <dc:source>http://commons.wikimedia.org/wiki/File:Jigsaw_Puzzle.svg</dc:source>
+      <dc:date>2008-10-23</dc:date>
+      <dc:creator>
+      <cc:Agent><dc:title>http://commons.wikimedia.org/wiki/User:Psyon</dc:title></cc:Agent></dc:creator></cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+      <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction" />
+      <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution" />
+      <cc:requires rdf:resource="http://creativecommons.org/ns#Notice" />
+      <cc:requires rdf:resource="http://creativecommons.org/ns#Attribution" />
+      <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      <cc:requires rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+   </rdf:RDF>
+   </metadata>
 <defs id="defs3116">
     <image
      y="-1.0019225"
@@ -44,30 +49,8 @@
  <clipPath id="{{ piece.address }}"><path
        clip-rule="evenodd"
        d="{{ piece.path }}"
-       inkscape:connector-curvature="0"
        style="fill:none;fill-rule:evenodd;stroke:#878787;stroke-linecap:round;stroke-opacity:1" /></clipPath>{% endfor %}
 </defs>
-
-<sodipodi:namedview
-   pagecolor="#ffffff"
-   bordercolor="#666666"
-   borderopacity="1"
-   objecttolerance="10"
-   gridtolerance="10"
-   guidetolerance="10"
-   inkscape:pageopacity="0"
-   inkscape:pageshadow="2"
-   inkscape:window-width="1676"
-   inkscape:window-height="1006"
-   id="namedview3114"
-   showgrid="false"
-   inkscape:zoom="1.0233766"
-   inkscape:cx="143.63501"
-   inkscape:cy="186.74376"
-   inkscape:window-x="0"
-   inkscape:window-y="0"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="Puzzle" />
 
 {% for location in locations %}<use
    id="clip{{ location.piece.address }}"
