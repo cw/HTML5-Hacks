@@ -15,26 +15,43 @@
 # limitations under the License.
 #
 import os
+import logging
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
+from google.appengine.api import memcache
 from models import Piece, Location
+
+logging.getLogger().setLevel(logging.DEBUG)
 
 config = {"SITE_NAME": "HTML5 Hacks"}
 
-
+IS_DEV = os.environ['SERVER_SOFTWARE'].startswith('Dev')  # Development server
+logging.debug("IS_DEV: %s" % IS_DEV)
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
         template_values = {
             "title": "HTML5 Hacks index",
+            "is_dev": IS_DEV,
             "config": config
         }
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
         self.response.out.write(template.render(path, template_values))
 
 class SvgHandler(webapp.RequestHandler):
+
+    def get_pieces(self):
+        pieces = memcache.get("pieces")
+        if pieces is not None:
+            return pieces
+        else:
+            pieces = self.render_pieces()
+            if not memcache.add("pieces", pieces, 10):
+                logging.error("Memcache set failed.")
+            return pieces
+
     def get(self):
 
         pieces = Piece.gql("ORDER BY address ASC")
@@ -49,6 +66,7 @@ class SvgHandler(webapp.RequestHandler):
             "title": "HTML5 Hacks: SVG",
             "config": config,
             "svg_text": svg_text,
+            "is_dev": IS_DEV,
             "rows": ["A", "B", "C", "D", "E", "F", "G", "H"],
             "cols": ["1", "2", "3", "4", "5", "6", "7", "8"],
         }
@@ -59,6 +77,7 @@ class CanvasHandler(webapp.RequestHandler):
     def get(self):
         template_values = {
             "title": "HTML5 Hacks: canvas",
+            "is_dev": IS_DEV,
             "config": config
         }
         path = os.path.join(os.path.dirname(__file__), 'templates/canvas.html')

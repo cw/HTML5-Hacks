@@ -106,12 +106,12 @@
     <script src="js/dd_belatedpng.js?v=1"></script>
   <![endif]-->
 
-
+  {% if is_dev %}
   <!-- yui profiler and profileviewer - remove for production -->
   <script src="/static/js/profiling/yahoo-profiling.min.js?v=1"></script>
   <script src="/static/js/profiling/config.js?v=1"></script>
   <!-- end profiling code -->
-
+  {% endif %}
 
   <!-- asynchronous google analytics: mathiasbynens.be/notes/async-analytics-snippet
        change the UA-XXXXX-X to be your site's ID -->
