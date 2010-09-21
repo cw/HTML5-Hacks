@@ -1,5 +1,9 @@
 from google.appengine.ext import db
 
+class Photo(db.Model):
+    title = db.StringProperty()
+    full_size_image = db.BlobProperty()
+
 class Puzzle(db.Model):
     name = db.StringProperty(multiline=False)
 
