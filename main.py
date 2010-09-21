@@ -21,6 +21,8 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
 from google.appengine.api import memcache
+from google.appengine.api import images
+
 from models import Piece, Location
 
 logging.getLogger().setLevel(logging.DEBUG)
@@ -47,14 +49,14 @@ class SvgHandler(webapp.RequestHandler):
         if pieces is not None:
             return pieces
         else:
-            pieces = self.render_pieces()
+            pieces = Piece.gql("ORDER BY address ASC")
             if not memcache.add("pieces", pieces, 10):
                 logging.error("Memcache set failed.")
             return pieces
 
     def get(self):
 
-        pieces = Piece.gql("ORDER BY address ASC")
+        pieces = self.get_pieces()
         locations = Location.gql("ORDER BY x ASC")
         svg_path = os.path.join(os.path.dirname(__file__), 'templates/puzzle.svg')
         svg_values = {
