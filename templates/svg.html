@@ -15,11 +15,11 @@ jQuery(document).ready(function () {
     jQuery(".toggle_row").toggle(
         function () {
             var val = jQuery(this).val();
-            jQuery('#[id^=' + val +']').hide();
+            jQuery('#[id^=clip' + val +']').hide();
         },
         function () {
             var val = jQuery(this).val();
-            jQuery('#[id^=' + val +']').show();
+            jQuery('#[id^=clip' + val +']').show();
         }
     );
     jQuery("#cycle_imgs").click(function (evt) {
@@ -29,7 +29,7 @@ jQuery(document).ready(function () {
     jQuery(".toggle_col").toggle(
         function () {
             var val = jQuery(this).val();
-            jQuery('#[id$=' + val +']').hide();
+            jQuery('use[id$=' + val +']').hide();
             /*
             this.style.display="none";
             var redrawFix = this.offsetHeight;
@@ -38,7 +38,7 @@ jQuery(document).ready(function () {
         },
         function () {
             var val = jQuery(this).val();
-            jQuery('#[id$=' + val +']').show();
+            jQuery('use[id$=' + val +']').show();
         }
     );
     jQuery("#image_url").change(function (evt) {
