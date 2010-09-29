@@ -67,6 +67,7 @@ class SvgHandler(webapp.RequestHandler):
         template_values = {
             "title": "HTML5 Hacks: SVG",
             "puzzles": puzzles,
+            "host": os.environ["HTTP_HOST"],
             "config": config,
             "svg_text": svg_text,
             "is_dev": IS_DEV,
@@ -80,11 +81,15 @@ class SvgHandler(webapp.RequestHandler):
 class ImageHandler(webapp.RequestHandler):
     def get(self):
         puzzle = Puzzle.get(self.request.get("img_id"))
+        thumb = self.request.get("thumb")
         # TODO figure out a good way to allow just thumbnails from this handler 
         #thumb = self.request.get("thumb")
         if puzzle.image:
             self.response.headers['Content-Type'] = "image/png"
-            self.response.out.write(puzzle.image.thumb_nail)
+            if thumb and thumb == "1":
+                self.response.out.write(puzzle.image.thumb_nail)
+            else:
+                self.response.out.write(puzzle.image.full_size)
         else:
             self.error(404)
 
@@ -92,19 +97,21 @@ class ImageHandler(webapp.RequestHandler):
 class NewPuzzleHandler(webapp.RequestHandler):
     def post(self):
         url = self.request.get("img_url")
-        inputimage = urlfetch.fetch(url)
-        if inputimage.status_code == 200:
-            image = Image()
-            image.full_size = inputimage.content
-            image.title = "Test image"
-            # TODO move to task queue
-            image.thumb_nail = images.resize(image.full_size, 32, 32)
-            image.put()
-            puzzle = Puzzle()
-            puzzle.name = "Test puzzle"
-            puzzle.image = image
-            puzzle.put()
-            self.redirect("/svg")
+        if url:
+            inputimage = urlfetch.fetch(url)
+            if inputimage.status_code == 200:
+                image = Image()
+                image.source_url = url
+                image.full_size = inputimage.content
+                image.title = "Test image"
+                # TODO move to task queue
+                image.thumb_nail = images.resize(image.full_size, 64, 64)
+                image.put()
+                puzzle = Puzzle()
+                puzzle.name = "Test puzzle"
+                puzzle.image = image
+                puzzle.put()
+                self.redirect("/svg")
 
 
 class CanvasHandler(webapp.RequestHandler):
