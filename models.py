@@ -1,11 +1,13 @@
 from google.appengine.ext import db
 
-class Photo(db.Model):
+class Image(db.Model):
     title = db.StringProperty()
-    full_size_image = db.BlobProperty()
+    full_size = db.BlobProperty()
+    thumb_nail = db.BlobProperty()
 
 class Puzzle(db.Model):
     name = db.StringProperty(multiline=False)
+    image = db.ReferenceProperty(Image)
 
 class Piece(db.Model):
 #    puzzle = db.ReferenceProperty(Puzzle)
