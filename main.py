@@ -22,8 +22,9 @@ from google.appengine.ext.webapp import util
 from google.appengine.ext.webapp import template
 from google.appengine.api import memcache
 from google.appengine.api import images
+from google.appengine.api import urlfetch
 
-from models import Piece, Location
+from models import Puzzle, Piece, Location, Image
 
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -43,7 +44,6 @@ class MainHandler(webapp.RequestHandler):
         self.response.out.write(template.render(path, template_values))
 
 class SvgHandler(webapp.RequestHandler):
-
     def get_pieces(self):
         pieces = memcache.get("pieces")
         if pieces is not None:
@@ -55,7 +55,7 @@ class SvgHandler(webapp.RequestHandler):
             return pieces
 
     def get(self):
-
+        puzzles = Puzzle.gql("ORDER BY name ASC")
         pieces = self.get_pieces()
         locations = Location.gql("ORDER BY x ASC")
         svg_path = os.path.join(os.path.dirname(__file__), 'templates/puzzle.svg')
@@ -66,6 +66,7 @@ class SvgHandler(webapp.RequestHandler):
         svg_text = template.render(svg_path, svg_values)
         template_values = {
             "title": "HTML5 Hacks: SVG",
+            "puzzles": puzzles,
             "config": config,
             "svg_text": svg_text,
             "is_dev": IS_DEV,
@@ -74,6 +75,37 @@ class SvgHandler(webapp.RequestHandler):
         }
         path = os.path.join(os.path.dirname(__file__), 'templates/svg.html')
         self.response.out.write(template.render(path, template_values))
+
+
+class ImageHandler(webapp.RequestHandler):
+    def get(self):
+        puzzle = Puzzle.get(self.request.get("img_id"))
+        # TODO figure out a good way to allow just thumbnails from this handler 
+        #thumb = self.request.get("thumb")
+        if puzzle.image:
+            self.response.headers['Content-Type'] = "image/png"
+            self.response.out.write(puzzle.image.thumb_nail)
+        else:
+            self.error(404)
+
+
+class NewPuzzleHandler(webapp.RequestHandler):
+    def post(self):
+        url = self.request.get("img_url")
+        inputimage = urlfetch.fetch(url)
+        if inputimage.status_code == 200:
+            image = Image()
+            image.full_size = inputimage.content
+            image.title = "Test image"
+            # TODO move to task queue
+            image.thumb_nail = images.resize(image.full_size, 32, 32)
+            image.put()
+            puzzle = Puzzle()
+            puzzle.name = "Test puzzle"
+            puzzle.image = image
+            puzzle.put()
+            self.redirect("/svg")
+
 
 class CanvasHandler(webapp.RequestHandler):
     def get(self):
@@ -89,6 +121,8 @@ class CanvasHandler(webapp.RequestHandler):
 def main():
     application = webapp.WSGIApplication([('/', MainHandler),
                                           ('/svg', SvgHandler),
+                                          ('/new_puzzle', NewPuzzleHandler),
+                                          ('/img', ImageHandler),
                                           ('/canvas', CanvasHandler),
                                          ],
                                          debug=True)

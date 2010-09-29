@@ -4,6 +4,11 @@
 <script type="text/javascript">
 jQuery(document).ready(function () {
     var imgs = [
+/*
+   {% for puzzle in puzzles %}
+   "
+   {% endfor %}
+*/
         "http://farm5.static.flickr.com/4114/4942943925_ce20e0e3a9_z.jpg",
         "http://farm5.static.flickr.com/4137/4942260322_82f854ba42_z.jpg",
         "http://farm5.static.flickr.com/4127/4972211068_8ea8f14d6f_z.jpg",
@@ -42,12 +47,13 @@ jQuery(document).ready(function () {
         }
     );
     jQuery("#image_url").change(function (evt) {
-        var url = evt.target.value;
+        var url = "/new_puzzle?img_url=" + evt.target.value;
         console.log(url);
         jQuery.ajax({
-            url: url, 
+            type: "POST",
+            url: url,
             complete :function (ahk) {
-                jQuery("#puzzle_image").attr("xlink:href", url);
+                //jQuery("#puzzle_image").attr("xlink:href", url);
             }
         });
     });
@@ -58,9 +64,13 @@ jQuery(document).ready(function () {
 {% block body %}
 <h4><a href="/">Home</a> &rarr; SVG is a programmable graphical document structure.</h4>
 <h5>Let me demonstrate.</h5>
+<div id="puzzle_thumbs">
+{% for puzzle in puzzles %}
+{% if puzzle.image.thumb_nail %}<img src="/img?img_id={{ puzzle.key }}"></img>{% endif %}
+{% endfor %}
+</div>
 <form>
-    <input id="image_url" name="q" type="url" placeholder="Enter image URL"
-    value="">
+    <input id="image_url" name="q" type="url" placeholder="Enter image URL" value="">
     <input type="button" value="Embed image">
     <input id="cycle_imgs" type="button" value="Cycle Images">
 </form>
