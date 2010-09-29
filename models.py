@@ -4,6 +4,7 @@ class Image(db.Model):
     title = db.StringProperty()
     full_size = db.BlobProperty()
     thumb_nail = db.BlobProperty()
+    source_url = db.LinkProperty()
 
 class Puzzle(db.Model):
     name = db.StringProperty(multiline=False)
