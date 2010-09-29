@@ -4,19 +4,12 @@
 <script type="text/javascript">
 jQuery(document).ready(function () {
     var imgs = [
-/*
-   {% for puzzle in puzzles %}
-   "
-   {% endfor %}
-*/
-        "http://farm5.static.flickr.com/4114/4942943925_ce20e0e3a9_z.jpg",
-        "http://farm5.static.flickr.com/4137/4942260322_82f854ba42_z.jpg",
-        "http://farm5.static.flickr.com/4127/4972211068_8ea8f14d6f_z.jpg",
-        "http://farm5.static.flickr.com/4097/4918183547_bc391b97af_z.jpg",
-        "http://farm5.static.flickr.com/4098/4903320116_edb5f56ac7_z.jpg"
-    ];
+        {% for puzzle in puzzles %}"http://{{ host }}/img?img_id={{ puzzle.key }}"{% if not forloop.last%},{% endif %}
+        {% endfor %}];
+
     jQuery("#puzzle_image").attr("xlink:href",
         "http://farm5.static.flickr.com/4114/4942943925_ce20e0e3a9_z.jpg");
+
     jQuery(".toggle_row").toggle(
         function () {
             var val = jQuery(this).val();
@@ -27,10 +20,12 @@ jQuery(document).ready(function () {
             jQuery('#[id^=clip' + val +']').show();
         }
     );
+
     jQuery("#cycle_imgs").click(function (evt) {
         imgs.push(imgs.shift());
         jQuery("#puzzle_image").attr("xlink:href", imgs[0]);
     });
+
     jQuery(".toggle_col").toggle(
         function () {
             var val = jQuery(this).val();
@@ -66,7 +61,7 @@ jQuery(document).ready(function () {
 <h5>Let me demonstrate.</h5>
 <div id="puzzle_thumbs">
 {% for puzzle in puzzles %}
-{% if puzzle.image.thumb_nail %}<img src="/img?img_id={{ puzzle.key }}"></img>{% endif %}
+{% if puzzle.image.thumb_nail %}<img src="/img?img_id={{ puzzle.key }}&thumb=1"></img>{% endif %}
 {% endfor %}
 </div>
 <form>
