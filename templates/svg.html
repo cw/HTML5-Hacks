@@ -8,7 +8,7 @@ jQuery(document).ready(function () {
         {% endfor %}];
 
     jQuery("#puzzle_image").attr("xlink:href",
-        "http://farm5.static.flickr.com/4114/4942943925_ce20e0e3a9_z.jpg");
+        "http://{{ host }}/img?img_id={{ first_puzzle.key }}");
 
     jQuery(".toggle_row").toggle(
         function () {
@@ -21,28 +21,8 @@ jQuery(document).ready(function () {
         }
     );
 
-    jQuery("#cycle_imgs").click(function (evt) {
-        imgs.push(imgs.shift());
-        jQuery("#puzzle_image").attr("xlink:href", imgs[0]);
-    });
-
-    jQuery(".toggle_col").toggle(
-        function () {
-            var val = jQuery(this).val();
-            jQuery('use[id$=' + val +']').hide();
-            /*
-            this.style.display="none";
-            var redrawFix = this.offsetHeight;
-            this.style.display="block"; // or other value if required
-            */
-        },
-        function () {
-            var val = jQuery(this).val();
-            jQuery('use[id$=' + val +']').show();
-        }
-    );
-    jQuery("#image_url").change(function (evt) {
-        var url = "/new_puzzle?img_url=" + evt.target.value;
+    jQuery("#new_puzzle").click(function (evt) {
+        var url = "/new_puzzle?img_url=" + jQuery("#image_url").val();
         console.log(url);
         jQuery.ajax({
             type: "POST",
@@ -52,6 +32,21 @@ jQuery(document).ready(function () {
             }
         });
     });
+
+    jQuery("#cycle_imgs").click(function (evt) {
+        imgs.push(imgs.shift());
+        jQuery("#puzzle_image").attr("xlink:href", imgs[0]);
+    });
+
+    jQuery(".toggle_col").toggle(
+        function () {
+            jQuery('use[id$=' + jQuery(this).val() +']').hide();
+        },
+        function () {
+            var val = jQuery(this).val();
+            jQuery('use[id$=' + jQuery(this).val() +']').show();
+        }
+    );
 });
 </script>
 {% endblock scripts %}
@@ -66,7 +61,7 @@ jQuery(document).ready(function () {
 </div>
 <form>
     <input id="image_url" name="q" type="url" placeholder="Enter image URL" value="">
-    <input type="button" value="Embed image">
+    <input id="new_puzzle" type="button" value="New puzzle from URL">
     <input id="cycle_imgs" type="button" value="Cycle Images">
 </form>
 <form>
