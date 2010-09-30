@@ -64,9 +64,14 @@ class SvgHandler(webapp.RequestHandler):
             "locations": locations,
         }
         svg_text = template.render(svg_path, svg_values)
+        try:
+            first_puzzle = puzzles[0]
+        except IndexError:
+            first_puzzle = "None"
         template_values = {
             "title": "HTML5 Hacks: SVG",
             "puzzles": puzzles,
+            "first_puzzle": first_puzzle,
             "host": os.environ["HTTP_HOST"],
             "config": config,
             "svg_text": svg_text,
