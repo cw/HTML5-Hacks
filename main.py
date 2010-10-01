@@ -87,8 +87,6 @@ class ImageHandler(webapp.RequestHandler):
     def get(self):
         puzzle = Puzzle.get(self.request.get("img_id"))
         thumb = self.request.get("thumb")
-        # TODO figure out a good way to allow just thumbnails from this handler 
-        #thumb = self.request.get("thumb")
         if puzzle.image:
             self.response.headers['Content-Type'] = "image/png"
             if thumb and thumb == "1":
