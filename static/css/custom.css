@@ -1,12 +1,71 @@
+body {
+    font-family: 'Vollkorn', arial, serif; 
+    font-size: 16px;
+    background-color: #OD58A6;
+    color: black;
+}
+
 header p {
-    
 }
 
 footer {
     margin-top: 50px;
 }
 
+h1 {
+    font-size: 200%;
+    padding: 15px 0 15px 0;
+}
+
+h1 a {
+    text-decoration: none;
+}
+
+#site_desc {
+    font-size: 95%;
+    padding: 15px 0 0 0;
+}
+
+#sections {
+    padding-top: 25px;
+    font-size: 150%;
+}
+
+#sections a {
+    padding: 20px 25px 20px 25px;
+    margin-right: 5px;
+    background-color: rgba(144, 134, 98, 0.796875);
+    color: white;
+    text-decoration: none;
+
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+
+    -webkit-box-shadow: 4px 5px 5px #2e272e;
+    -moz-box-shadow: 4px 5px 5px #2e272e;
+    box-shadow: 4px 5px 5px #2e272e;
+}
+
+#sections a:hover {
+    -webkit-animation-name: colorchange;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-direction: alternate;
+    -webkit-animation-timing-function: ease-in-out;
+}
+
 #image_url {
     width: 375px;
 }
 
+@-webkit-keyframes colorchange {
+    0% {
+    }
+    50% {
+        background-color: rgba(44, 134, 98, 0.796875);
+    }
+    100% {
+        background-color: rgba(244, 134, 98, 0.796875);
+    }
+}
