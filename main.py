@@ -127,13 +127,47 @@ class CanvasHandler(webapp.RequestHandler):
         path = os.path.join(os.path.dirname(__file__), 'templates/canvas.html')
         self.response.out.write(template.render(path, template_values))
 
+class WebGLHandler(webapp.RequestHandler):
+    def get(self):
+        template_values = {
+            "title": "HTML5 Hacks: WebGL",
+            "is_dev": IS_DEV,
+            "config": config
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/webgl.html')
+        self.response.out.write(template.render(path, template_values))
+
+class CSS3Handler(webapp.RequestHandler):
+    def get(self):
+        template_values = {
+            "title": "HTML5 Hacks: CSS3",
+            "is_dev": IS_DEV,
+            "config": config
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/css3.html')
+        self.response.out.write(template.render(path, template_values))
+
+class VideoHandler(webapp.RequestHandler):
+    def get(self):
+        template_values = {
+            "title": "HTML5 Hacks: Video",
+            "is_dev": IS_DEV,
+            "config": config
+        }
+        path = os.path.join(os.path.dirname(__file__), 'templates/video.html')
+        self.response.out.write(template.render(path, template_values))
+
 
 def main():
     application = webapp.WSGIApplication([('/', MainHandler),
                                           ('/svg', SvgHandler),
+                                          ('/canvas', CanvasHandler),
+                                          ('/webgl', WebGLHandler),
+                                          ('/video', VideoHandler),
+                                          ('/css3', CSS3Handler),
+                                          # helper urls
                                           ('/new_puzzle', NewPuzzleHandler),
                                           ('/img', ImageHandler),
-                                          ('/canvas', CanvasHandler),
                                          ],
                                          debug=True)
     util.run_wsgi_app(application)
