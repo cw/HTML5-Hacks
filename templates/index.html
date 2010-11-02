@@ -7,10 +7,10 @@
 
 <a href="http://github.com/cw/HTML5-Hacks"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub" /></a>
 
-<div class="grid_3">
+<div id="site_title" class="grid_3">
     <h1><a href="/">{{ config.SITE_NAME }}</a></h1>
 </div>
-<div class="grid_5">
+<div id="site_desc" class="grid_5">
 <!--
 <p>HTML5 represents a shift from the desktop as a primary computing
 device towards a more ubiquitous mobile computing environment. Eventually devices everywhere will have at their
@@ -29,15 +29,17 @@ technologies included under the <a
 
 {% block body %}
 <div id="holder"></div>
-<a href="/svg">SVG</a>
-<a href="/canvas">Canvas</a>
-<a href="/webgl">WebGL</a>
-<a href="#">CSS3</a>
-<a href="#">Video</a>
+<div id="sections">
+    <a href="/svg">SVG</a>
+    <a href="/canvas">Canvas</a>
+    <a href="/webgl">WebGL</a>
+    <a href="/css3">CSS3</a>
+    <a href="/video">Video</a>
+</div>
 
 {% endblock %}
 
 {% block footer %}
-&copy; 2010, {{ config.SITE_NAME }} &bull; <a
-    href="http://github.com/cw/HTML5-Hacks/">fork me on github</a>
+&copy; 2010, {{ config.SITE_NAME }} &bull; by <a
+    href="http://christianwilcox.com">Christian Wilcox</a>
 {% endblock %}
