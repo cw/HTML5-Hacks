@@ -38,28 +38,45 @@ but there you go. ** full disclosure. **
 
 <script type="text/javascript">
 
-  var gl;
-  function initGL(canvas) {
+function WebGLDemo () {
+    var gl,
+        shaderProgram,
+        shader,
+        mvMatrix,
+        mvMatrixStack = [],
+        pMatrix,
+        pyramidVertexPositionBuffer,
+        pyramidVertexColorBuffer,
+        cubeVertexPositionBuffer,
+        cubeVertexColorBuffer,
+        cubeVertexIndexBuffer,
+        rPyramid = 0,
+        rCube = 0,
+        lastTime = 0;
+}
+
+WebGLDemo.prototype.initGL = function (canvas) {
     try {
-      gl = canvas.getContext("experimental-webgl");
-      gl.viewportWidth = canvas.width;
-      gl.viewportHeight = canvas.height;
+      this.gl = canvas.getContext("experimental-webgl");
+      this.gl.viewportWidth = canvas.width;
+      this.gl.viewportHeight = canvas.height;
     } catch(e) {
     }
-    if (!gl) {
+    if (!this.gl) {
       alert("Could not initialise WebGL, sorry :-(");
     }
-  }
+};
 
-
-  function getShader(gl, id) {
-    var shaderScript = document.getElementById(id);
+WebGLDemo.prototype.getShader = function (id) {
+    var shaderScript = document.getElementById(id),
+        shader;
     if (!shaderScript) {
       return null;
     }
 
     var str = "",
         k = shaderScript.firstChild;
+
     while (k) {
       if (k.nodeType == 3) {
         str += k.textContent;
@@ -67,116 +84,103 @@ but there you go. ** full disclosure. **
       k = k.nextSibling;
     }
 
-    var shader;
     if (shaderScript.type == "x-shader/x-fragment") {
-      shader = gl.createShader(gl.FRAGMENT_SHADER);
+      shader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
     } else if (shaderScript.type == "x-shader/x-vertex") {
-      shader = gl.createShader(gl.VERTEX_SHADER);
+      shader = this.gl.createShader(this.gl.VERTEX_SHADER);
     } else {
       return null;
     }
 
-    gl.shaderSource(shader, str);
-    gl.compileShader(shader);
+    this.gl.shaderSource(shader, str);
+    this.gl.compileShader(shader);
 
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      alert(gl.getShaderInfoLog(shader));
+    if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+      alert(this.gl.getShaderInfoLog(shader));
       return null;
     }
 
     return shader;
-  }
+};
 
+WebGLDemo.prototype.initShaders = function () { 
+    console.log("about to initShaders");
+    var fragmentShader = this.getShader(this.gl, "shader-fs"),
+        vertexShader = this.getShader(this.gl, "shader-vs");
 
-  var shaderProgram;
-  function initShaders() {
-    var fragmentShader = getShader(gl, "shader-fs");
-    var vertexShader = getShader(gl, "shader-vs");
+    this.shaderProgram = this.gl.createProgram();
+    this.gl.attachShader(this.shaderProgram, vertexShader);
+    this.gl.attachShader(this.shaderProgram, fragmentShader);
+    this.gl.linkProgram(this.shaderProgram);
 
-    shaderProgram = gl.createProgram();
-    gl.attachShader(shaderProgram, vertexShader);
-    gl.attachShader(shaderProgram, fragmentShader);
-    gl.linkProgram(shaderProgram);
+    console.log("after linking this.shaderProgram");
 
-    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+    if (!this.gl.getProgramParameter(this.shaderProgram, this.gl.LINK_STATUS)) {
       alert("Could not initialise shaders");
     }
 
-    gl.useProgram(shaderProgram);
+    this.gl.useProgram(this.shaderProgram);
 
-    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
-    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+    this.shaderProgram.vertexPositionAttribute = this.gl.getAttribLocation(this.shaderProgram, "aVertexPosition");
+    this.gl.enableVertexAttribArray(this.shaderProgram.vertexPositionAttribute);
 
-    shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
-    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+    this.shaderProgram.vertexColorAttribute = this.gl.getAttribLocation(this.shaderProgram, "aVertexColor");
+    this.gl.enableVertexAttribArray(this.shaderProgram.vertexColorAttribute);
 
-    shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
-    shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-  }
+    this.shaderProgram.pMatrixUniform = this.gl.getUniformLocation(this.shaderProgram, "uPMatrix");
+    this.shaderProgram.mvMatrixUniform = this.gl.getUniformLocation(this.shaderProgram, "uMVMatrix");
+};
 
-
-  var mvMatrix;
-  var mvMatrixStack = [];
-
-
-  function mvPushMatrix(m) {
+WebGLDemo.prototype.mvPushMatrix = function (m) {
     if (m) {
-      mvMatrixStack.push(m.dup());
-      mvMatrix = m.dup();
+      this.mvMatrixStack.push(m.dup());
+      this.mvMatrix = m.dup();
     } else {
-      mvMatrixStack.push(mvMatrix.dup());
+      this.mvMatrixStack.push(this.mvMatrix.dup());
     }
-  }
+};
 
-  function mvPopMatrix() {
-    if (mvMatrixStack.length == 0) {
+WebGLDemo.prototype.mvPopMatrix = function () {
+    if (this.mvMatrixStack.length == 0) {
       throw "Invalid popMatrix!";
     }
-    mvMatrix = mvMatrixStack.pop();
-    return mvMatrix;
-  }
+    this.mvMatrix = this.mvMatrixStack.pop();
+    return this.mvMatrix;
+};
 
-  function loadIdentity() {
-    mvMatrix = Matrix.I(4);
-  }
+WebGLDemo.prototype.loadIdentity = function () {
+    this.mvMatrix = Matrix.I(4);
+};
 
+WebGLDemo.prototype.multMatrix = function (m) {
+    this.mvMatrix = this.mvMatrix.x(m);
+};
 
-  function multMatrix(m) {
-    mvMatrix = mvMatrix.x(m);
-  }
-
-  function mvTranslate(v) {
+WebGLDemo.prototype.mvTranslate = function (v) {
     var m = Matrix.Translation($V([v[0], v[1], v[2]])).ensure4x4();
-    multMatrix(m);
-  }
+    this.multMatrix(m);
+};
 
+WebGLDemo.prototype.mvRotate = function (ang, v) {
+    var arad = ang * Math.PI / 180.0,
+        m = Matrix.Rotation(arad, $V([v[0], v[1], v[2]])).ensure4x4();
+    this.multMatrix(m);
+};
 
-  function mvRotate(ang, v) {
-    var arad = ang * Math.PI / 180.0;
-    var m = Matrix.Rotation(arad, $V([v[0], v[1], v[2]])).ensure4x4();
-    multMatrix(m);
-  }
+WebGLDemo.prototype.perspective = function (fovy, aspect, znear, zfar) {
+    this.pMatrix = this.makePerspective(fovy, aspect, znear, zfar);
+};
 
-  var pMatrix;
-  function perspective(fovy, aspect, znear, zfar) {
-    pMatrix = makePerspective(fovy, aspect, znear, zfar);
-  }
+WebGLDemo.prototype.setMatrixUniforms = function () {
+    console.log("setMatrixUniforms");
+    this.gl.uniformMatrix4fv(this.shaderProgram.pMatrixUniform, false, new Float32Array(this.pMatrix.flatten()));
+    this.gl.uniformMatrix4fv(this.shaderProgram.mvMatrixUniform, false, new Float32Array(this.mvMatrix.flatten()));
+};
 
-
-  function setMatrixUniforms() {
-    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, new Float32Array(pMatrix.flatten()));
-    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, new Float32Array(mvMatrix.flatten()));
-  }
-
-
-  var pyramidVertexPositionBuffer;
-  var pyramidVertexColorBuffer;
-  var cubeVertexPositionBuffer;
-  var cubeVertexColorBuffer;
-  var cubeVertexIndexBuffer;
-  function initBuffers() {
-    pyramidVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexPositionBuffer);
+WebGLDemo.prototype.initBuffers = function () {
+    console.log("initBuffers");
+    this.pyramidVertexPositionBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(gl.ARRAY_BUFFER, this.pyramidVertexPositionBuffer);
     var vertices = [
         // Front face
          0.0,  1.0,  0.0,
@@ -195,12 +199,12 @@ but there you go. ** full disclosure. **
         -1.0, -1.0, -1.0,
         -1.0, -1.0,  1.0
     ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    pyramidVertexPositionBuffer.itemSize = 3;
-    pyramidVertexPositionBuffer.numItems = 12;
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
+    this.pyramidVertexPositionBuffer.itemSize = 3;
+    this.pyramidVertexPositionBuffer.numItems = 12;
 
-    pyramidVertexColorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexColorBuffer);
+    this.pyramidVertexColorBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pyramidVertexColorBuffer);
     var colors = [
         // Front face
         1.0, 0.0, 0.0, 1.0,
@@ -219,13 +223,12 @@ but there you go. ** full disclosure. **
         0.0, 0.0, 1.0, 1.0,
         0.0, 1.0, 0.0, 1.0
     ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-    pyramidVertexColorBuffer.itemSize = 4;
-    pyramidVertexColorBuffer.numItems = 12;
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(colors), this.gl.STATIC_DRAW);
+    this.pyramidVertexColorBuffer.itemSize = 4;
+    this.pyramidVertexColorBuffer.numItems = 12;
 
-
-    cubeVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+    this.cubeVertexPositionBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVertexPositionBuffer);
     vertices = [
       // Front face
       -1.0, -1.0,  1.0,
@@ -263,33 +266,36 @@ but there you go. ** full disclosure. **
       -1.0,  1.0,  1.0,
       -1.0,  1.0, -1.0,
     ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    cubeVertexPositionBuffer.itemSize = 3;
-    cubeVertexPositionBuffer.numItems = 24;
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(vertices), this.gl.STATIC_DRAW);
+    this.cubeVertexPositionBuffer.itemSize = 3;
+    this.cubeVertexPositionBuffer.numItems = 24;
 
-    cubeVertexColorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
+    this.cubeVertexColorBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVertexColorBuffer);
     var colors = [
-      [1.0, 0.0, 0.0, 1.0],     // Front face
-      [1.0, 1.0, 0.0, 1.0],     // Back face
-      [0.0, 1.0, 0.0, 1.0],     // Top face
-      [1.0, 0.5, 0.5, 1.0],     // Bottom face
-      [1.0, 0.0, 1.0, 1.0],     // Right face
-      [0.0, 0.0, 1.0, 1.0],     // Left face
-    ];
-    var unpackedColors = []
-    for (var i in colors) {
-      var color = colors[i];
-      for (var j=0; j < 4; j++) {
+          [1.0, 0.0, 0.0, 1.0],     // Front face
+          [1.0, 1.0, 0.0, 1.0],     // Back face
+          [0.0, 1.0, 0.0, 1.0],     // Top face
+          [1.0, 0.5, 0.5, 1.0],     // Bottom face
+          [1.0, 0.0, 1.0, 1.0],     // Right face
+          [0.0, 0.0, 1.0, 1.0],     // Left face
+        ],
+        unpackedColors = [],
+        i,
+        color,
+        j;
+    for (i in colors) {
+      color = colors[i];
+      for (j = 0; j < 4; j++) {
         unpackedColors = unpackedColors.concat(color);
       }
     }
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
-    cubeVertexColorBuffer.itemSize = 4;
-    cubeVertexColorBuffer.numItems = 24;
+    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(unpackedColors), this.gl.STATIC_DRAW);
+    this.cubeVertexColorBuffer.itemSize = 4;
+    this.cubeVertexColorBuffer.numItems = 24;
 
-    cubeVertexIndexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+    this.cubeVertexIndexBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVertexIndexBuffer);
     var cubeVertexIndices = [
       0, 1, 2,      0, 2, 3,    // Front face
       4, 5, 6,      4, 6, 7,    // Back face
@@ -298,95 +304,94 @@ but there you go. ** full disclosure. **
       16, 17, 18,   16, 18, 19, // Right face
       20, 21, 22,   20, 22, 23  // Left face
     ]
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
-    cubeVertexIndexBuffer.itemSize = 1;
-    cubeVertexIndexBuffer.numItems = 36;
-  }
+    this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), this.gl.STATIC_DRAW);
+    this.cubeVertexIndexBuffer.itemSize = 1;
+    this.cubeVertexIndexBuffer.numItems = 36;
+};
 
 
-  var rPyramid = 0;
-  var rCube = 0;
-  function drawScene() {
-    gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+WebGLDemo.prototype.drawScene = function () {
+    console.log("drawScene");
+    this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
-    perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0);
-    loadIdentity();
+    perspective(45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
+    this.loadIdentity();
 
-    mvTranslate([-1.5, 0.0, -8.0]);
+    this.mvTranslate([-1.5, 0.0, -8.0]);
 
-    mvPushMatrix();
-    mvRotate(rPyramid, [0, 1, 0]);
+    this.mvPushMatrix();
+    this.mvRotate(this.rPyramid, [0, 1, 0]);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexPositionBuffer);
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, pyramidVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pyramidVertexPositionBuffer);
+    this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, this.pyramidVertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, pyramidVertexColorBuffer);
-    gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, pyramidVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pyramidVertexColorBuffer);
+    this.gl.vertexAttribPointer(this.shaderProgram.vertexColorAttribute, this.pyramidVertexColorBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
 
-    setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLES, 0, pyramidVertexPositionBuffer.numItems);
+    this.setMatrixUniforms();
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, this.pyramidVertexPositionBuffer.numItems);
 
-    mvPopMatrix();
+    this.mvPopMatrix();
 
+    this.mvTranslate([3.0, 0.0, 0.0]);
 
-    mvTranslate([3.0, 0.0, 0.0])
+    this.mvPushMatrix();
+    this.mvRotate(this.rCube, [1, 1, 1]);
 
-    mvPushMatrix();
-    mvRotate(rCube, [1, 1, 1]);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVertexPositionBuffer);
+    this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, this.cubeVertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVertexColorBuffer);
+    this.gl.vertexAttribPointer(this.shaderProgram.vertexColorAttribute, this.cubeVertexColorBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexColorBuffer);
-    gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, cubeVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVertexIndexBuffer);
+    this.setMatrixUniforms();
+    this.gl.drawElements(this.gl.TRIANGLES, this.cubeVertexIndexBuffer.numItems, this.gl.UNSIGNED_SHORT, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
-    setMatrixUniforms();
-    gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+    this.mvPopMatrix();
+};
 
-    mvPopMatrix();
-
-  }
-
-
-  var lastTime = 0;
-  function animate() {
-    var timeNow = new Date().getTime();
-    if (lastTime != 0) {
-      var elapsed = timeNow - lastTime;
-
-      rPyramid += (90 * elapsed) / 1000.0;
-      rCube -= (75 * elapsed) / 1000.0;
+WebGLDemo.prototype.animate = function () {
+    var timeNow = new Date().getTime(),
+        elapsed;
+    if (this.lastTime !== 0) {
+      elapsed = timeNow - this.lastTime;
+      this.rPyramid += (90 * elapsed) / 1000.0;
+      this.rCube -= (75 * elapsed) / 1000.0;
     }
-    lastTime = timeNow;
-  }
+    this.lastTime = timeNow;
+};
 
 
-  function tick() {
-    drawScene();
-    animate();
-  }
+WebGLDemo.prototype.tick = function () {
+    this.drawScene();
+    this.animate();
+};
 
-
-  function webGLStart() {
+WebGLDemo.prototype.webGLStart = function () {
     var canvas = document.getElementById("3d_boxes");
-    initGL(canvas);
-    initShaders()
-    initBuffers();
 
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    this.initGL(canvas);
+    console.log("after initGL");
+    this.initShaders();
+    console.log("after initShaders");
+    this.initBuffers();
+    console.log("after initBuffers");
 
-    gl.clearDepth(1.0);
+    this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
+    this.gl.clearDepth(1.0);
 
-    setInterval(tick, 15);
-  }
+    this.gl.enable(gl.DEPTH_TEST);
+    this.gl.depthFunc(gl.LEQUAL);
+
+    setInterval(this.tick, 15);
+};
 
 jQuery(document).ready(function () {
-    webGLStart();
+    var demo = new WebGLDemo();
+    demo.webGLStart();
 });
 </script>
 {% endblock scripts %}
