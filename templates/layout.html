@@ -17,6 +17,9 @@
   <!--  Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width; initial-scale=1.0">
 
+  <!-- Google web font -->
+  <link href='http://fonts.googleapis.com/css?family=Vollkorn&subset=latin' rel='stylesheet' type='text/css'>
+
   <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
   <link rel="shortcut icon" href="/static/favicon.ico">
   <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
@@ -58,11 +61,7 @@
 
     <div id="main" class="grid_12">
         <div class="flash_messages">
-            {% for message in messages %}
-            <div class="flash">
-                {{ message }}
-            </div>
-            {% endfor %}
+            {% for message in messages %}<div class="flash">{{ message }}</div>{% endfor %}
         </div>
         {% block body %}
         Body goes here.
@@ -71,7 +70,7 @@
 
     <div class="clear"></div>
 
-    <footer class="grid_4 prefix_4 suffix_4">
+    <footer class="grid_5 prefix_3 suffix_3">
         {% block footer %}
         Footer goes here
         {% endblock %}
