@@ -34,7 +34,7 @@ h1 a {
 #sections a {
     padding: 20px 25px 20px 25px;
     margin-right: 5px;
-    background-color: rgba(144, 134, 98, 0.796875);
+    background-color: rgba(144, 134, 98, 0.5);
     color: white;
     text-decoration: none;
 
@@ -49,7 +49,7 @@ h1 a {
 
 #sections a:hover {
     -webkit-animation-name: colorchange;
-    -webkit-animation-duration: 2s;
+    -webkit-animation-duration: 3s;
     -webkit-animation-iteration-count: infinite;
     -webkit-animation-direction: alternate;
     -webkit-animation-timing-function: ease-in-out;
@@ -63,9 +63,9 @@ h1 a {
     0% {
     }
     50% {
-        background-color: rgba(44, 134, 98, 0.796875);
+        background-color: rgba(144, 134, 98, 1);
     }
     100% {
-        background-color: rgba(244, 134, 98, 0.796875);
+        background-color: rgba(144, 134, 98, 0.5);
     }
 }
