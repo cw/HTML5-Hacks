@@ -1,6 +1,24 @@
 {% extends "index.html" %}
 
+{% block scripts %}
+<script type="text/javascript">
+jQuery(document).ready(function () {
+    var demo = document.getElementById("demo"),
+        ctx = demo.getContext("2d");
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(10, 10, 380, 280);
+    ctx.font = "bold 24px sans-serif";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    ctx.fillText("Canvas is the future!", 200, 150);
+});
+</script>
+{% endblock scripts %}
+
 {% block body %}
 <h2><a href="/">Home</a> &rarr; canvas</h2>
 <p>canvas is equally awesome. Let me demonstrate.</p>
+
+<canvas id="demo" width="400" height="300">Your browser does not appear to support canvas.</canvas>
 {% endblock %}
