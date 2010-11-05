@@ -69,13 +69,14 @@ WebGLDemo.prototype.initGL = function (canvas) {
 
 WebGLDemo.prototype.getShader = function (id) {
     var shaderScript = document.getElementById(id),
-        shader;
+        shader,
+        str = "",
+        k;
     if (!shaderScript) {
       return null;
     }
 
-    var str = "",
-        k = shaderScript.firstChild;
+    k = shaderScript.firstChild;
 
     while (k) {
       if (k.nodeType == 3) {
@@ -104,19 +105,16 @@ WebGLDemo.prototype.getShader = function (id) {
 };
 
 WebGLDemo.prototype.initShaders = function () { 
-    console.log("about to initShaders");
-    var fragmentShader = this.getShader(this.gl, "shader-fs"),
-        vertexShader = this.getShader(this.gl, "shader-vs");
+    var fragmentShader = this.getShader("shader-fs"),
+        vertexShader = this.getShader("shader-vs");
 
     this.shaderProgram = this.gl.createProgram();
     this.gl.attachShader(this.shaderProgram, vertexShader);
     this.gl.attachShader(this.shaderProgram, fragmentShader);
     this.gl.linkProgram(this.shaderProgram);
 
-    console.log("after linking this.shaderProgram");
-
     if (!this.gl.getProgramParameter(this.shaderProgram, this.gl.LINK_STATUS)) {
-      alert("Could not initialise shaders");
+        alert("Could not initialise shaders");
     }
 
     this.gl.useProgram(this.shaderProgram);
@@ -132,11 +130,17 @@ WebGLDemo.prototype.initShaders = function () {
 };
 
 WebGLDemo.prototype.mvPushMatrix = function (m) {
+    var demo = jQuery(document).data("demo");
+
     if (m) {
-      this.mvMatrixStack.push(m.dup());
-      this.mvMatrix = m.dup();
+        console.log(this);
+        console.log(this.mvMatrixStack);
+        this.mvMatrixStack.push(m.dup());
+        this.mvMatrix = m.dup();
     } else {
-      this.mvMatrixStack.push(this.mvMatrix.dup());
+        console.log(this);
+        console.log(this.mvMatrixStack);
+        this.mvMatrixStack.push(this.mvMatrix.dup());
     }
 };
 
@@ -168,7 +172,7 @@ WebGLDemo.prototype.mvRotate = function (ang, v) {
 };
 
 WebGLDemo.prototype.perspective = function (fovy, aspect, znear, zfar) {
-    this.pMatrix = this.makePerspective(fovy, aspect, znear, zfar);
+    this.pMatrix = makePerspective(fovy, aspect, znear, zfar);
 };
 
 WebGLDemo.prototype.setMatrixUniforms = function () {
@@ -178,9 +182,8 @@ WebGLDemo.prototype.setMatrixUniforms = function () {
 };
 
 WebGLDemo.prototype.initBuffers = function () {
-    console.log("initBuffers");
     this.pyramidVertexPositionBuffer = this.gl.createBuffer();
-    this.gl.bindBuffer(gl.ARRAY_BUFFER, this.pyramidVertexPositionBuffer);
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pyramidVertexPositionBuffer);
     var vertices = [
         // Front face
          0.0,  1.0,  0.0,
@@ -311,45 +314,46 @@ WebGLDemo.prototype.initBuffers = function () {
 
 
 WebGLDemo.prototype.drawScene = function () {
-    console.log("drawScene");
-    this.gl.viewport(0, 0, this.gl.viewportWidth, this.gl.viewportHeight);
-    this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+    var demo = jQuery(document).data("demo");
 
-    perspective(45, this.gl.viewportWidth / this.gl.viewportHeight, 0.1, 100.0);
-    this.loadIdentity();
+    demo.gl.viewport(0, 0, demo.gl.viewportWidth, demo.gl.viewportHeight);
+    demo.gl.clear(demo.gl.COLOR_BUFFER_BIT | demo.gl.DEPTH_BUFFER_BIT);
 
-    this.mvTranslate([-1.5, 0.0, -8.0]);
+    demo.perspective(45, demo.gl.viewportWidth / demo.gl.viewportHeight, 0.1, 100.0);
+    demo.loadIdentity();
 
-    this.mvPushMatrix();
-    this.mvRotate(this.rPyramid, [0, 1, 0]);
+    demo.mvTranslate([-1.5, 0.0, -8.0]);
 
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pyramidVertexPositionBuffer);
-    this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, this.pyramidVertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
+    demo.mvPushMatrix();
+    demo.mvRotate(demo.rPyramid, [0, 1, 0]);
 
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.pyramidVertexColorBuffer);
-    this.gl.vertexAttribPointer(this.shaderProgram.vertexColorAttribute, this.pyramidVertexColorBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
+    demo.gl.bindBuffer(demo.gl.ARRAY_BUFFER, demo.pyramidVertexPositionBuffer);
+    demo.gl.vertexAttribPointer(demo.shaderProgram.vertexPositionAttribute, demo.pyramidVertexPositionBuffer.itemSize, demo.gl.FLOAT, false, 0, 0);
 
-    this.setMatrixUniforms();
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, this.pyramidVertexPositionBuffer.numItems);
+    demo.gl.bindBuffer(demo.gl.ARRAY_BUFFER, demo.pyramidVertexColorBuffer);
+    demo.gl.vertexAttribPointer(demo.shaderProgram.vertexColorAttribute, demo.pyramidVertexColorBuffer.itemSize, demo.gl.FLOAT, false, 0, 0);
 
-    this.mvPopMatrix();
+    demo.setMatrixUniforms();
+    demo.gl.drawArrays(demo.gl.TRIANGLES, 0, demo.pyramidVertexPositionBuffer.numItems);
 
-    this.mvTranslate([3.0, 0.0, 0.0]);
+    demo.mvPopMatrix();
 
-    this.mvPushMatrix();
-    this.mvRotate(this.rCube, [1, 1, 1]);
+    demo.mvTranslate([3.0, 0.0, 0.0]);
 
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVertexPositionBuffer);
-    this.gl.vertexAttribPointer(this.shaderProgram.vertexPositionAttribute, this.cubeVertexPositionBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
+    demo.mvPushMatrix();
+    demo.mvRotate(demo.rCube, [1, 1, 1]);
 
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.cubeVertexColorBuffer);
-    this.gl.vertexAttribPointer(this.shaderProgram.vertexColorAttribute, this.cubeVertexColorBuffer.itemSize, this.gl.FLOAT, false, 0, 0);
+    demo.gl.bindBuffer(demo.gl.ARRAY_BUFFER, demo.cubeVertexPositionBuffer);
+    demo.gl.vertexAttribPointer(demo.shaderProgram.vertexPositionAttribute, demo.cubeVertexPositionBuffer.itemSize, demo.gl.FLOAT, false, 0, 0);
 
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.cubeVertexIndexBuffer);
-    this.setMatrixUniforms();
-    this.gl.drawElements(this.gl.TRIANGLES, this.cubeVertexIndexBuffer.numItems, this.gl.UNSIGNED_SHORT, 0);
+    demo.gl.bindBuffer(demo.gl.ARRAY_BUFFER, demo.cubeVertexColorBuffer);
+    demo.gl.vertexAttribPointer(demo.shaderProgram.vertexColorAttribute, demo.cubeVertexColorBuffer.itemSize, demo.gl.FLOAT, false, 0, 0);
 
-    this.mvPopMatrix();
+    demo.gl.bindBuffer(demo.gl.ELEMENT_ARRAY_BUFFER, demo.cubeVertexIndexBuffer);
+    demo.setMatrixUniforms();
+    demo.gl.drawElements(demo.gl.TRIANGLES, demo.cubeVertexIndexBuffer.numItems, demo.gl.UNSIGNED_SHORT, 0);
+
+    demo.mvPopMatrix();
 };
 
 WebGLDemo.prototype.animate = function () {
@@ -365,28 +369,42 @@ WebGLDemo.prototype.animate = function () {
 
 
 WebGLDemo.prototype.tick = function () {
-    this.drawScene();
-    this.animate();
+    var demo = jQuery(document).data("demo");
+
+    try {
+        demo.drawScene();
+    } catch(e) {
+        throw "drawScene broke!";
+    }
+    try {
+        demo.animate();
+    } catch(e) {
+        throw "animate broke!";
+    }
 };
 
 WebGLDemo.prototype.webGLStart = function () {
     var canvas = document.getElementById("3d_boxes");
 
     this.initGL(canvas);
-    console.log("after initGL");
     this.initShaders();
-    console.log("after initShaders");
     this.initBuffers();
-    console.log("after initBuffers");
 
+    //this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 
     this.gl.clearDepth(1.0);
 
-    this.gl.enable(gl.DEPTH_TEST);
-    this.gl.depthFunc(gl.LEQUAL);
+    this.gl.enable(this.gl.DEPTH_TEST);
+    this.gl.depthFunc(this.gl.LEQUAL);
 
-    setInterval(this.tick, 15);
+    jQuery(document).data("demo", this);
+
+    try {
+        interval = setInterval(this.tick, 15);
+    } catch(e) {
+        clearInterval(interval); 
+    }
 };
 
 jQuery(document).ready(function () {
