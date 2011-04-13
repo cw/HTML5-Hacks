@@ -21,6 +21,15 @@ h1 a {
     text-decoration: none;
 }
 
+dd {
+    margin-left: 20px;
+}
+
+dt {
+    font-weight: bold;
+}
+
+
 #site_desc {
     font-size: 95%;
     padding: 15px 0 0 0;
@@ -69,3 +78,4 @@ h1 a {
         background-color: rgba(144, 134, 98, 0.5);
     }
 }
+
