@@ -3,10 +3,10 @@
    id="Puzzle"
    x="0px"
    y="0px"
-   width="641"
-   height="481"
-   viewBox="0 0 641 481"
-   enable-background="new 0 0 641 481"
+   width="{{width}}"
+   height="{{height}}"
+   viewBox="0 0 {{width}} {{height}}"
+   enable-background="new 0 0 {{width}} {{height}}"
    <title id="title3120">Puzzle</title>
 <defs id="defs3116">
     <image
@@ -14,8 +14,8 @@
      x="0"
      id="puzzle_image"
      xlink:href=""
-     height="481"
-     width="641"
+     height="{{height}}"
+     width="{{width}}"
      style="fill:none" />
  {% for piece in pieces %}
  <clipPath id="{{ piece.address }}"><path
