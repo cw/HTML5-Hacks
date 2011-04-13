@@ -4,6 +4,9 @@ Christian Wilcox 2010
 
 jQuery(document).ready(function () {
 
+    jQuery(".programmable").css("color", "red");
+    jQuery(".graphical").css("color", "green");
+    jQuery(".doc_structure").css("color", "blue");
     /*
     var width = jQuery("#container").width(),
         page = {width: width, height: 1000},
