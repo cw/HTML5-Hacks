@@ -62,6 +62,8 @@ class SvgHandler(webapp.RequestHandler):
         svg_values = {
             "pieces": pieces,
             "locations": locations,
+            "width": 641,
+            "height": 481
         }
         svg_text = template.render(svg_path, svg_values)
         try:
