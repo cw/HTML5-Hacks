@@ -46,13 +46,36 @@ jQuery(document).ready(function () {
             jQuery('use[id$=' + jQuery(this).val() +']').show();
         }
     );
+
+    jQuery("[id^=clip]").toggle(
+        function (evt) {
+            jQuery(this).attr("visibility", "hidden");
+        },
+        function (evt) {
+            jQuery(this).attr("visibility", "visible");
+        }
+    );
 });
 </script>
 {% endblock scripts %}
 
 {% block body %}
-<h4><a href="/">Home</a> &rarr; SVG is a programmable graphical document structure.</h4>
+<h4><a href="/">Home</a> &rarr; SVG is a <span class="programmable">programmable</span>
+    <span class="graphical">graphical</span> <span class="doc_structure">document structure</span>.</h4>
+<p>Let's break that down.<p>
+<dl>
+    <dt class="programmable">Programmable</dt>
+    <dd>Examples: automate interaction with graphics (display a real time analog
+    clock), update graphics with data from remote web services (highlight a map
+    in real time as users post to twitter).</dd>
+    <dt class="graphical">Graphical</dt>
+    <dd>Visual representation of shapes and color.</dd>
+    <dt class="doc_structure">Document structure</dt>
+    <dd>Examples: <rect x="10" y="10" height="100" width="100"
+        style="stroke:black;fill:red" /></dd>
+</dl>
 <h5>Let me demonstrate.</h5>
+<p>Click an image below or paste the location of any publicly available image.</p>
 <div id="puzzle_thumbs">
 {% for puzzle in puzzles %}
 {% if puzzle.image.thumb_nail %}<a href="/svg?puzzle_id={{ puzzle.key }}"><img src="/img?img_id={{ puzzle.key }}&thumb=1"></img></a>{% endif %}
